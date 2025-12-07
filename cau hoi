@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Ai Là Triệu Phú - Đơn Giản</title>
+<style>
+    body { font-family: Arial; background: #eef5ff; text-align: center; padding: 20px; }
+    #game { width: 600px; margin: auto; background: #fff; padding: 20px;
+            border-radius: 10px; box-shadow: 0 0 10px #aaa; }
+    .answer { background: #dfe9ff; margin: 10px; padding: 15px;
+              border-radius: 8px; cursor: pointer; font-size: 18px; }
+    .answer:hover { background: #c6d9ff; }
+    .correct { background: #6bd66b !important; }
+    .wrong { background: #ff6b6b !important; }
+</style>
+</head>
+<body>
+
+<div id="game">
+    <h2>AI LÀ TRIỆU PHÚ – 40 CÂU</h2>
+
+    <div id="question"></div>
+    <div id="answers"></div>
+    <div id="status" style="font-size:22px; margin-top:20px;"></div>
+</div>
+
+<script>
+// ----- DANH SÁCH 40 CÂU HỎI CỦA BẠN -----
+const questions = [
+    ["Hai con sông lớn gắn với văn minh Trung Hoa cổ đại là:",
+     ["Hằng Hà – Ấn Hà","Nile – Congo","Hoàng Hà – Trường Giang","Tigris – Euphrates"],2],
+    ["Lớp đất màu vàng đặc trưng ở Hoàng Hà gọi là:",
+     ["Đất đỏ","Hoàng thổ","Đen thổ","Đất phù sa xám"],1],
+    ["Nền kinh tế chủ đạo của Trung Quốc cổ đại:",
+     ["Công nghiệp","Thương nghiệp","Nông nghiệp","Thủ công nghiệp"],2],
+    ["Xã hội Trung Quốc cổ đại phân chia theo thứ tự:",
+     ["Thương – Công – Nông – Sĩ","Nông – Công – Thương – Sĩ","Sĩ – Nông – Công – Thương","Công – Thương – Sĩ – Nông"],2],
+    ["Hình thức tuyển chọn quan lại quan trọng nhất:",
+     ["Cha truyền con nối","Thi khoa cử","Tuyển ngẫu nhiên","Cử người tài"],1],
+    ["Triều đại đầu tiên của Trung Quốc:",
+     ["Tần","Thương","Hạ","Chu"],2],
+    ["Triều đại có bằng chứng khảo cổ sớm nhất:",
+     ["Hạ","Thương","Chu","Tần"],1],
+    ["Mô hình chính trị đặc trưng:",
+     ["Cộng hòa dân chủ","Quân chủ lập hiến","Quân chủ chuyên chế trung ương tập quyền","Quân phiệt cát cứ"],2],
+    ["Lý do khiến tầng lớp nho sĩ được coi trọng:",
+     ["Giàu nhất","Nắm quyền lực kinh tế","Là trí thức phục vụ bộ máy quan liêu","Là chiến binh"],2],
+    ["Hai đồng bằng quan trọng nhất:",
+     ["Tây Tạng – Tân Cương","Hoàng Thổ – Đông Bắc","Hoàng Hà – Trường Giang","Cát Lâm – Chiết Giang"],2],
+    ["Triều đại thống nhất Trung Quốc lần đầu tiên:",
+     ["Hán","Chu","Tần","Đường"],2],
+    ["Hoàng đế đầu tiên:",
+     ["Hán Cao Tổ","Tần Thủy Hoàng","Vũ Đế","Đường Thái Tông"],1],
+    ["Lý do nhà Tần sụp đổ nhanh:",
+     ["Thiên tai","Chính sách hà khắc","Ngoại xâm","Thiếu lương thực"],1],
+    ["Thời kỳ hoàng kim:",
+     ["Tần","Đường","Tống","Nguyên"],1],
+    ["Con đường thương mại:",
+     ["Con đường Gia Vị","Con đường Lụa Vàng","Con đường Tơ Lụa","Con đường Biển Đỏ"],2],
+    ["Triều đại của người Mông Cổ:",
+     ["Nguyên","Minh","Thanh","Tống"],0],
+    ["Triều đại người Mãn Lữ:",
+     ["Minh","Thanh","Tống","Nguyên"],1],
+    ["Bộ luật hoàn chỉnh nhất:",
+     ["Tần luật","Hán luật","Đường luật","Minh luật"],2],
+    ["Triều đại củng cố Vạn Lý Trường Thành:",
+     ["Hạ","Tống","Minh","Chu"],2],
+    ["Thương nghiệp phát triển mạnh nhất:",
+     ["Minh","Tống","Hán","Đường"],1],
+    ["Người sáng lập Nho giáo:",
+     ["Mạnh Tử","Khổng Tử","Tuân Tử","Lão Tử"],1],
+    ["Kinh điển ghi lời Khổng Tử:",
+     ["Đại Học","Trung Dung","Luận Ngữ","Kinh Thi"],2],
+    ["Mạnh Tử đề cao:",
+     ["Tính ác","Tính thiện","Vô vi","Vô thường"],1],
+    ["Tuân Tử cho rằng:",
+     ["Thiện","Ác","Trung bình","Biến đổi"],1],
+    ["Người sáng lập Đạo giáo:",
+     ["Lão Tử","Trang Tử","Khổng Tử","Thích Ca"],0],
+    ["Tác phẩm của Lão Tử:",
+     ["Nam Hoa Kinh","Luận Ngữ","Đạo Đức Kinh","Kinh Dịch"],2],
+    ["Phật giáo truyền vào Trung Quốc từ:",
+     ["Ấn Độ","Tây Tạng","Triều Tiên","Ba Tư"],0],
+    ["Phật giáo cực thịnh:",
+     ["Tống","Đường","Minh","Thanh"],1],
+    ["Tư tưởng Nho giáo nhấn mạnh:",
+     ["Pháp trị","Binh pháp","Lễ – Nghĩa – Nhân – Trí – Tín","Thống nhất bằng bạo lực"],2],
+    ["Trường phái 'vô vi':",
+     ["Nho giáo","Mặc gia","Đạo giáo","Pháp gia"],2],
+    ["Tứ đại phát minh:",
+     ["Giấy, thuốc súng, in ấn, la bàn","Toán học, thiên văn, thuốc súng, kiếm thép","Luật lệ, thi cử, giấy, thư pháp","Gốm sứ, đồng, la bàn, y thuật"],0],
+    ["Người phát minh giấy:",
+     ["Khổng Tử","Hứa Thận","Tôn Tẫn","Thái Luân"],3],
+    ["Kỹ thuật in ra đời khi nào:",
+     ["Đường","Tống","Nguyên","Minh"],0],
+    ["Gốm sứ rực rỡ nhất:",
+     ["Hán","Tống","Chu","Thương"],1],
+    ["Bộ sử thư lớn nhất thời Hán:",
+     ["Sử ký Tư Mã Thiên","Hán thư","Đường thư","Minh sử"],0],
+    ["Thành tựu thiên văn:",
+     ["Lịch Julius","Âm – Dương lịch","Lịch Maya","Lịch Ai Cập"],1],
+    ["Trường phái quân sự:",
+     ["Mặc gia","Binh gia","Nho gia","Danh gia"],1],
+    ["Tác phẩm Tôn Tử:",
+     ["Binh pháp Tôn Tử","Binh pháp Ngô Khởi","Tam lược","Lục thao"],0],
+    ["Biểu tượng kiến trúc:",
+     ["Kim tự tháp","Đấu trường Colosseum","Vạn Lý Trường Thành","Đền Parthenon"],2],
+    ["Y học cổ truyền:",
+     ["Châm cứu","Giải phẫu","Phẫu thuật não","Ghép tạng"],0]
+];
+
+// ----------------------------------
+let index = 0;
+
+function loadQ() {
+    if (index >= questions.length) {
+        document.getElementById("question").innerText = "🎉 Bạn đã hoàn thành 40 câu!";
+        document.getElementById("answers").innerHTML = "";
+        return;
+    }
+
+    let q = questions[index];
+    document.getElementById("question").innerHTML = "<h3>Câu " + (index+1) + ":</h3>" + q[0];
+
+    let html = "";
+    q[1].forEach((ans, i) => {
+        html += `<div class='answer' onclick='pick(${i})'>${ans}</div>`;
+    });
+    document.getElementById("answers").innerHTML = html;
+}
+
+function pick(i) {
+    let q = questions[index];
+    let elements = document.getElementsByClassName("answer");
+
+    if (i == q[2]) {
+        elements[i].classList.add("correct");
+        index++;
+        setTimeout(loadQ, 800);
+    } else {
+        elements[i].classList.add("wrong");
+        document.getElementById("status").innerText = "❌ Sai rồi!";
+    }
+}
+
+loadQ();
+</script>
+
+</body>
+</html>
